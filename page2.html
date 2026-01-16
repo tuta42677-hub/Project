@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Вторая страница проекта по информатике</title>
@@ -72,7 +72,7 @@
 <body>
     <div class="container">
         <h1>Чем опасны сайты?</h1>
-        <p>конечно, это текстовыми полями, гиперссылками, даже в изображении может быть опасность</p>
+        <p>Конечно, это текстовыми полями, гиперссылками, даже в изображении может быть опасность.</p>
 
         <div class="input-container">
             <label for="userText">Введите текст:</label>
@@ -84,9 +84,9 @@
         <div class="button-container">
             <a href="index.html">
                 <button class="my-button">Вернуться на главную страницу</button>
-                            </a>
-            <a href="https://www.ivpek.ru" target="_blank">
-                <button class="my-button">Перейти на Сайт ИВПЕК</button>
+            </a>
+            <a href="https://ivanovo.postupi.online/ssuz/ivpek/" target="_blank">
+                <button class="my-button">Поступи в ИВПЭК</button>
             </a>
            <a href="page3.html">  <!-- Добавлена ссылка на страницу 3 -->
                 <button class="my-button">Перейти на страницу 3</button>
@@ -102,19 +102,34 @@
     <script>
         function sendTextToServer() {
             let text = document.getElementById("userText").value;
-            let messageDiv = document.getElementById("message");
+            let messageDiv = document.getElementById("message"); // Получаем элемент для сообщения
 
-                fetch('http://192.168.1.70>:5000/api/data', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ key: 'value' })
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch(error => console.error('Error:', error));
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => {
+                if (response.ok) {
+                    messageDiv.textContent = 'Текст успешно отправлен на сервер.'; // Выводим сообщение об успехе
+                    messageDiv.style.color = 'green'; // Делаем сообщение зеленым
+                } else {
+                    messageDiv.textContent = 'Ошибка при отправке текста на сервер.'; // Выводим сообщение об ошибке
+                    messageDiv.style.color = 'red'; // Делаем сообщение красным
+                }
+                return response.json(); // Возвращаем JSON-ответ
+            })
+            .then(data => {
+                console.log('Ответ от сервера:', data); // Логируем ответ от сервера
+            })
+            .catch(error => {
+                console.error('Ошибка:', error); // Логируем ошибку
+                messageDiv.textContent = 'Произошла ошибка при отправке данных.'; // Выводим сообщение об ошибке
+                messageDiv.style.color = 'red'; // Делаем сообщение красным
             });
-    </script> 
+        }
+    </script>
 </body>
 </html>
