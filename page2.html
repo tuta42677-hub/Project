@@ -101,19 +101,22 @@
 
     <script>
         function sendTextToServer() {
-            let text = document.getElementById("userText").value;
-            let messageDiv = document.getElementById("message"); // Получаем элемент для сообщения
-
-            fetch('http://127.0.0.1:5000/', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ key: 'value' }) // Ваши данные
-})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error('Ошибка:', error)):
+    fetch('http://127.0.0.1:5001/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ key: 'value' }) // Ваши данные
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Сеть ответила с ошибкой');
+        }
+        return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => console.error('Ошибка:', error));
+}
             {
                     messageDiv.textContent = 'Текст успешно отправлен на сервер.'; // Выводим сообщение об успехе
                     messageDiv.style.color = 'green'; // Делаем сообщение зеленым
