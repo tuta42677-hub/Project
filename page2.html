@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
-        <head>
+<html lang="ru">
+<head>
     <meta charset="UTF-8">
-    <title>Вторая страница проекта по информатике</title>
+    <title>Вторая страница проекта</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,23 +20,13 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: black;
-            font-size: 2em;
-            font-weight: bold;
-        }
-        p {
-            font-size: 1.8em;
-            color: black;
-        }
+        h1 { font-size: 2em; font-weight: bold; }
+        p { font-size: 1.8em; }
         .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 20px;
-        }
-        .button-container a {
-            margin-bottom: 10px;
         }
         .my-button {
             background-color: #4286f4;
@@ -44,36 +34,29 @@
             color: white;
             padding: 15px 32px;
             text-align: center;
-            text-decoration: none;
             font-size: 16px;
             cursor: pointer;
             border-radius: 8px;
-        }
-        .bottom-image-container {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .bottom-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
+            margin-bottom: 10px;
+            text-decoration: none;
         }
         .input-container {
-            margin-bottom: 20px;
+            margin: 30px 0;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
         }
-        #userText {
+        input[type="text"] {
             padding: 10px;
             width: 60%;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
         #message {
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: bold;
         }
+        .bottom-image { max-width: 100%; height: auto; border-radius: 8px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -82,34 +65,28 @@
         <p>Конечно, это текстовыми полями, гиперссылками, даже в изображении может быть опасность</p>
 
         <div class="input-container">
-            <label for="userText">Введите текст (он сохранится в базу данных):</label><br><br>
-            <input type="text" id="userText" name="userText" placeholder="Напишите что-нибудь...">
+            <label for="userText">Введите текст для записи в базу:</label><br><br>
+            <input type="text" id="userText" placeholder="Введите ваше сообщение...">
             <button class="my-button" onclick="sendTextToServer()">Отправить на сервер</button>
-                <div id="message"></div>
+            <div id="message"></div>
         </div>
 
         <div class="button-container">
-            <a href="index.html">
-                <button class="my-button">Вернуться на главную страницу</button>
-            </a>
-            <a href="https://ivanovo.postupi.online/ssuz/ivpek/" target="_blank">
-                <button class="my-button">Поступи в ИВПЭК</button>
-            </a>
-            <a href="page3.html">
-                <button class="my-button">Перейти на страницу 3</button>
-            </a>
+            <a href="index.html" class="my-button">Вернуться на главную страницу</a>
+            <a href="https://ivanovo.postupi.online/ssuz/ivpek/" target="_blank" class="my-button">Поступи в ИВПЭК</a>
+            <a href="page3.html" class="my-button">Перейти на страницу 3</a>
         </div>
 
         <div class="bottom-image-container">
-            <img src="images/RickrollingQRcode.png" alt="Шпион ФСБ" class="bottom-image">
+            <img src="images/RickrollingQRcode.png" alt="QR Code" class="bottom-image">
         </div>
     </div>
 
     <script>
         function sendTextToServer() {
-            let textField = document.getElementById("userText");
-            let textValue = textField.value;
-            let messageDiv = document.getElementById("message");
+            const textField = document.getElementById("userText");
+            const textValue = textField.value;
+            const messageDiv = document.getElementById("message");
 
             if (!textValue) {
                 messageDiv.textContent = "Сначала введите текст!";
@@ -117,29 +94,30 @@
                 return;
             }
 
-            // Отправляем данные на локальный Python сервер
-            fetch('http://127.0.0.1:5001/submit', {
+            messageDiv.textContent = "Отправка...";
+            messageDiv.style.color = "black";
+
+            // Отправляем данные на Python сервер (порт 5555)
+            fetch('http://127.0.0.1:5555/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ text: textValue })
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка сервера');
+                return response.json();
+            })
             .then(data => {
-                if (data.status === "success") {
-                    messageDiv.textContent = 'Успех: ' + data.message;
-                    messageDiv.style.color = 'green';
-                    textField.value = ""; // Очистить поле
-                } else {
-                    messageDiv.textContent = 'Ошибка сервера.';
-                    messageDiv.style.color = 'red';
-                }
+                messageDiv.textContent = "Успех: " + data.message;
+                messageDiv.style.color = "green";
+                textField.value = ""; // Очищаем поле ввода
             })
             .catch(error => {
-                console.error('Error:', error);
-                messageDiv.textContent = 'Ошибка: сервер Python не запущен!';
-                messageDiv.style.color = 'red';
+                console.error('Ошибка:', error);
+                messageDiv.textContent = "Ошибка: сервер Python не отвечает";
+                messageDiv.style.color = "red";
             });
         }
     </script>
